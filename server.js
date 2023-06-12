@@ -10,7 +10,7 @@ const io = socketIO(server);
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + 'public/cliente1.html');
+  res.sendFile(__dirname + '/public/cliente1.html');
 });
 
 function loadExistingMessages(file, eventName, socket) {
@@ -28,25 +28,25 @@ function saveMessage(file, data) {
 }
 
 function borrarTexto(cliente) {
-    let archivo;
-    let evento;
-  
-    if (cliente === 'cliente1') {
-      archivo = 'public/assets/txt/textoParaCliente1.txt';
-      evento = 'textoBorradoCliente1';
-    } else if (cliente === 'cliente2') {
-      archivo = 'public/assets/txt/textoParaCliente2.txt';
-      evento = 'textoBorradoCliente2';
-    } else {
-      return;
-    }
-  
-    fs.writeFile(archivo, '', (err) => {
-      if (err) throw err;
-      console.log(`Contenido del archivo de texto de ${cliente} borrado.`);
-      io.emit(evento);
-    });
+  let archivo;
+  let evento;
+
+  if (cliente === 'cliente1') {
+    archivo = 'public/assets/txt/textoParaCliente1.txt';
+    evento = 'textoBorradoCliente1';
+  } else if (cliente === 'cliente2') {
+    archivo = 'public/assets/txt/textoParaCliente2.txt';
+    evento = 'textoBorradoCliente2';
+  } else {
+    return;
   }
+
+  fs.writeFile(archivo, '', (err) => {
+    if (err) throw err;
+    console.log(`Contenido del archivo de texto de ${cliente} borrado.`);
+    io.emit(evento);
+  });
+}
 
 io.on('connection', (socket) => {
   console.log('Cliente conectado');
