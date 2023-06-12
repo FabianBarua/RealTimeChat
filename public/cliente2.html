@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/queries.css">
+    
+    <script src="/socket.io/socket.io.js"></script>
+
+    <title>Google</title>
+
+  </head>
+
+  <body class="dark-mode">
+    <header>
+      
+      <nav class="nav-bar">
+        <ul class="nav-items nav-items-dark">
+          <li class="nav-item">
+            <a href="https://mail.google.com/mail/&amp;ogbl" target="_blank">Gmail</a>
+          </li>
+          <li class="nav-item">
+            <a href="https://www.google.com.ng/imghp?hl=en&amp;ogbl" target="_blank">Images</a>
+          </li>
+          <li class="dark-app-icon">
+            <img title="Google apps" src="assets/img/GOOgle apps dark.png" alt="">
+          </li>
+          <li class="app-icon hidden">
+            <img title="Google apps" src="assets/img/dot-icon-20.jpg" alt="">
+          </li>
+          <li class="sign-in">
+            <a href="https://accounts.google.com/ServiceLogin?hl=en&amp;passive=true&amp;continue=https://www.google.com/&amp;ec=GAZAmgQ" target="_blank">
+              <button class="sign-btn dark-sign">Sign in</button></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- main -->
+    <main>
+      <section class="logo-container">
+        <div class="logo ">
+          <img src="assets/img/googlelogo_color_272x92dp.png" alt="Google Logo">
+        </div>
+      </section>
+      <section class="search-container">
+        <div class="search-bar search-bar-dark">
+      <div  href="#" id="enviar">
+      <input type="search" class="search search-dark" id="textoInput">
+      </div>
+          <div class="search-icon">
+            <img  title="Search" src="assets/img/search-icon-png-2.png" alt="search-icon">
+            <!-- <span class="search-tooltip">Search</span> -->
+          </div>
+          <div class="voice-icon">
+            <img title="Search by voice" src="assets/img/voice search.png" alt="voice-icon">
+            <!-- <span class="voice-tooltip">Search by voice</span> -->
+          </div>
+        </div>
+        <div class="search-btn hidden">
+          <a href="/#">
+            <button>Google Search</button>
+          </a>
+          <a href="https://www.google.com/doodles">
+            <button>I'm Feeling Lucky</button>
+          </a>
+        </div>
+        <div class="btn-dark">
+          <a href="/#">
+            <button>Buscar con Google</button>
+          </a>
+          <a href="https://www.google.com/doodles">
+            <button>Voy a tener suerte</button>
+          </a>
+        </div>
+      </section>
+
+      <section class="languages">
+        <div>
+          <ul class="langs langs-dark">
+            <li class="lang">Ofrecido por Google en:</li>
+            <li class="lang">
+              <a href="https://www.google.com/">Español (Latinoamérica)</a>
+            </li>
+
+          </ul>
+        </div>
+      </section>
+
+      <footer>
+        <div class="foot">
+          <div class="nigeria nigeria-dark"><p>Paraguay</p></div>
+          <!-- <hr /> -->
+          <div class="others others-dark">
+            <ul class="foot-links start">
+              <li>
+                <a href="https://about.google/?utm_source=google-NG&amp;utm_medium=referral&amp;utm_campaign=hp-footer&amp;fg=1">Sobre Google</a>
+              </li>
+              <li>
+                <a href="https://www.google.com/intl/en_ng/ads/?subid=ww-ww-et-g-awa-a-g_hpafoot1_1!o2&amp;utm_source=google.com&amp;utm_medium=referral&amp;utm_campaign=google_hpafooter&amp;fg=1">Publicidad</a>
+              </li>
+              <li>
+                <a href="https://www.google.com/services/?subid=ww-ww-et-g-awa-a-g_hpbfoot1_1!o2&amp;utm_source=google.com&amp;utm_medium=referral&amp;utm_campaign=google_hpbfooter&amp;fg=1">Negocios</a>
+              </li>
+            </ul>
+            <div>
+              <p class="carbon"></p>
+            </div>
+            <ul class="foot-links end">
+              <li><a href="/">Privacidad</a></li>
+              <li><a href="/">Condiciones</a></li>
+              <li><a href="/">Preferencias</a></li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+    </main>
+    <div  href="#" id="textoContainerCliente2" style="color:rgba(60,61,64,1)"></div>
+
+  <!-- Agregar elemento de audio oculto -->
+  <audio id="notificationSound">
+    <source src="notificacion.mp3" type="audio/mp3">
+  </audio>
+
+  
+  <script>
+    const socket = io();
+    const textoContainerCliente2 = document.getElementById('textoContainerCliente2');
+    const notificationSound = document.getElementById('notificationSound');
+    const titleElement = document.querySelector('title');
+
+    let numMensajesNuevos = 0;
+    let isActive = true;
+
+  </script>
+  <!-- recibir mensajes -->
+  <script>
+    
+
+
+    socket.on('nuevoTextoCliente1', (data) => {
+      const nuevoTexto = document.createElement('p');
+      nuevoTexto.innerHTML = data;
+      textoContainerCliente2.appendChild(nuevoTexto);
+
+      if (!isActive) {
+        // Incrementar el contador de mensajes nuevos solo si la página está inactiva
+        numMensajesNuevos++;
+      }
+
+      // Actualizar el título solo si la página está inactiva
+      if (!isActive) {
+        updateTitle();
+      }
+
+      // Reproducir sonido al recibir un nuevo mensaje
+      playNotificationSound();
+    });
+
+    // Mostrar mensajes existentes al iniciar
+    socket.on('mensajesExistentesCliente2', (data) => {
+      const mensajes = data.split('\n');
+      for (let i = 0; i < mensajes.length; i++) {
+        if (mensajes[i]) {
+          const mensaje = document.createElement('p');
+          mensaje.innerHTML = mensajes[i];
+          textoContainerCliente2.appendChild(mensaje);
+        }
+      }
+    });
+
+    // Función para reproducir el sonido
+    function playNotificationSound() {
+      // Verificar si el audio está habilitado
+      if (notificationSound.canPlayType && notificationSound.canPlayType('audio/mp3')) {
+        notificationSound.play();
+      }
+    }
+  </script>
+
+<!-- enviar mensajes -->
+<script>
+  const textoInput = document.getElementById('textoInput');
+
+  textoInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Evitar el comportamiento por defecto de la tecla Enter (submit de formulario)
+      const texto = textoInput.value;
+      if (texto) {
+        socket.emit('textoCliente2', texto);
+        textoInput.value = '';
+      }
+    }
+  });
+</script>
+
+
+  <!-- borrar mis mensajes -->
+  <script>
+    document.onkeydown = function(evt) {
+      evt = evt || window.event;
+      if (evt.keyCode == 27) {
+        socket.emit('borrarTexto', 'cliente2');
+      }
+    };
+
+    socket.on('textoBorradoCliente2', () => {
+      textoContainerCliente2.innerHTML = '';
+    });
+
+  </script>
+
+
+
+<!-- notificacion en tittle -->
+  <script>
+    function updateTitle() {
+    if (numMensajesNuevos > 0) {
+      titleElement.textContent = `(${numMensajesNuevos}) Google`;
+    } else {
+      titleElement.textContent = 'Google';
+    }
+  }
+
+  // Manejar el evento visibilitychange
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      isActive = true;
+      numMensajesNuevos = 0;
+      updateTitle();
+    } else {
+      isActive = false;
+    }
+  });
+  </script>
+
+
+</body></html>
