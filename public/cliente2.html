@@ -140,24 +140,44 @@
     
 
 
-    socket.on('nuevoTextoCliente1', (data) => {
-      const nuevoTexto = document.createElement('p');
-      nuevoTexto.innerHTML = data;
-      textoContainerCliente2.appendChild(nuevoTexto);
+socket.on('nuevoTextoCliente1', (data) => {
+  const nuevoTexto = document.createElement('p');
+  nuevoTexto.innerHTML = data;
+  textoContainerCliente2.appendChild(nuevoTexto);
 
-      if (!isActive) {
-        // Incrementar el contador de mensajes nuevos solo si la página está inactiva
-        numMensajesNuevos++;
-      }
+  if (!isActive) {
+    // Incrementar el contador de mensajes nuevos solo si la página está inactiva
+    numMensajesNuevos++;
 
-      // Actualizar el título solo si la página está inactiva
-      if (!isActive) {
-        updateTitle();
-      }
+    // Mostrar notificación
+    showNotification('Status Ok', 'Status ok');
+  }
 
-      // Reproducir sonido al recibir un nuevo mensaje
-      playNotificationSound();
-    });
+  // Actualizar el título solo si la página está inactiva
+  if (!isActive) {
+    updateTitle();
+  }
+
+  // Reproducir sonido al recibir un nuevo mensaje
+  playNotificationSound();
+});
+
+function showNotification(title, message) {
+  // Verificar si las notificaciones son compatibles con el navegador
+  if ('Notification' in window) {
+    if (Notification.permission === 'granted') {
+      // Mostrar la notificación si se tiene permiso
+      new Notification(title, { body: message });
+    } else {
+      // Si no se tiene permiso, solicitarlo
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          new Notification(title, { body: message });
+        }
+      });
+    }
+  }
+}
 
     // Mostrar mensajes existentes al iniciar
     socket.on('mensajesExistentesCliente2', (data) => {
